@@ -11,8 +11,8 @@ Some batch useful tools
 */
 
 
-var tools = require('users/AlCassell/Gee:tools')
-var helpers = require('users/AlCassell/Gee:helpers_js')
+var tools = require('users/AlCassell/gee:tools')
+var helpers = require('users/AlCassell/gee:helpers_js')
 
 // TASK CLASS
 var Task = function(taskId, config) {
