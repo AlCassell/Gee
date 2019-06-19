@@ -4,7 +4,7 @@
  * License: Apache 2.0
  **********************************/
 
-var helpersJS = require('users/AlCassell/Gee:helpers_js')
+var helpersJS = require('users/AlCassell/gee:helpers_js')
 
 var msg = "geetools ver. 0.1.0\n\n"+
 "If you code depends on this module, and has \n"+
