@@ -1,12 +1,10 @@
 /*********************************
  * Some tools
- * Author: Rodrigo E. Principe
+ * Originial Author: Rodrigo E. Principe
  * License: Apache 2.0
- * email: fitoprincipe82@gmail.com
- * page: https://github.com/fitoprincipe/geetools-code-editor/wiki
  **********************************/
 
-var helpersJS = require('users/fitoprincipe/geetools:helpers_js')
+var helpersJS = require('users/AlCassell/Gee:helpers_js')
 
 var msg = "geetools ver. 0.1.0\n\n"+
 "If you code depends on this module, and has \n"+
