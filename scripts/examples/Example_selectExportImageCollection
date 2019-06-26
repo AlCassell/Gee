@@ -1,0 +1,135 @@
+//######################################################################################################## 
+//#                                                                                                    #\\
+//#                  Example: Select to Export Image Collection or Not                                 #\\
+//#                                                                                                    #\\
+//########################################################################################################
+
+// date: 2019-06-26
+// author: Alexandria Cassell | Alexncassell@gmail.com
+/* notes: 
+  - Script decides whether to export a batch of files (ImageCollection) based on
+  users response in the answer variable.
+  
+  Necessary variables to fill or comment out:
+    - folderLocation
+    - L8Collection
+    - startDate
+    - endDate
+    - startPath
+    - endPath
+    - startRow
+    - endRow
+    - cloudCover
+    - answer (default set to false)
+       
+  The batch, helpers_js, and tools scripts from 
+  https://github.com/fitoprincipe/geetools-code-editor/tree/319b26d005d7ee12fd024ff90f281e641299e590
+  by fitoprincipe is necessary for this script to work.
+
+*/
+
+//##########################################################################################//
+// START SCRIPT
+//##########################################################################################//
+
+
+
+////  INPUT VARIABLES ////
+var batch = require('users/fitoprincipe/geetools:batch');
+
+// input boundary if desired: can use geometry, draw a polygon, call a featureCollection
+var boundary =(
+        ee.Geometry.Polygon(
+            [[[-79.6634218122258, 37.91250154885937],
+              [-79.6634218122258, 34.70858588852587],
+              [-75.6863710309758, 34.70858588852587],
+              [-75.6863710309758, 37.91250154885937]]], null, false));
+Map.addLayer (boundary, {color: 'blue'}, 'boundary');
+
+// EDITABLE VARIABLE //
+// choose Google Drive folder to export imageCollection
+var folderLocation = 'test';
+// select Collection
+var L8Collection = ('LANDSAT/LC08/C01/T1_SR');
+//// variables used to filter collection ////
+var startDate = '2016-06-01';
+var endDate = '2016-08-15';
+// // select number of WRS path/rows as ## 
+// var startPath = ##;
+// var endPath = ##;
+// var startRow = ##;
+// var endRow = ##;
+// select % of cloud ##
+var cloudCover = 10;
+// var pathRow = (ee.Filter.or(
+// // select pathRows if desired
+//           ee.Filter.and(ee.Filter.rangeContains('WRS_PATH', startPath, endPath)),
+//           ee.Filter.and(ee.Filter.rangeContains('WRS_ROW', startRow, endRow))));
+
+
+// input true to export images or false not to export
+var answer = false;
+print('Do you want to export files?', answer);
+// answer = ee.Number(answer);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// BRING IN IMAGE COLLECTION ///
+// call in surface reflectance image collection
+var L8 = ee.ImageCollection(L8Collection)
+  // filter by dates
+        .filterDate(startDate, endDate)
+  // filter by boundary, either draw geometry or import feature/featureCollection
+        .filterBounds(boundary)
+  // filter by WRS paths/rows
+        // .filter(pathRow)
+  // filter through metadata of landsat images for images with less than the cloudCover's input %.
+        .filter(ee.Filter.metadata('CLOUD_COVER', 'less_than', cloudCover));
+        // .map(maskCloud);
+
+print('L8 Satellite Imagery', L8);
+// prints number of images
+print('Size of Landsat collection', L8.size());
+
+// view ImageCollection
+Map.addLayer({
+eeObject: L8,
+name: 'Surface Reflectance Images',
+visParams: {bands: ['B4', 'B3', 'B2'], min: 0.0, max: 3000, gamma: 1.4}
+});
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+// change the image collection you want to export to be = to exportImages
+var exportImages = L8;
+
+
+// uses answer to check whether to export batch, print false statement, or print other
+var exportBatchImages = function(yourBool){
+  if(yourBool === true) {
+    print('Exporting files...');
+    (batch.Download.ImageCollection.toDrive(exportImages, folderLocation, {scale:30}));
+  } else if (yourBool === false) {
+    print('Did not export files!');
+  } else {
+    print('Something else was entered for exporting files.');
+  }
+};
+
+
+var myList = answer;
+// print('my list is', typeof(myList));
+var condition = (myList === (true));
+
+// check condition, make sure it is not an object or it will automatically be true
+// print(("This is our initial condition:", condition));
+// print('condition is type of:', typeof(condition));
+
+// checks if condition is met to export or not to export ImageCollection
+var exportChoice = ee.Algorithms.If({
+      condition: condition, 
+      trueCase: exportBatchImages(answer),       // do something
+      falseCase: ('No selected, do not export files')});
