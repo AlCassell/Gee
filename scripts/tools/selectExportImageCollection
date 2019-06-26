@@ -107,15 +107,14 @@ var exportBatchImages = function(yourBool){
 
 
 var myList = answer;
-print('my list is', typeof(myList));
+// print('my list is', typeof(myList));
 var condition = (myList === (true));
 
 // check condition, make sure it is not an object or it will automatically be true
-print(("This is our initial condition:", condition));
-print('condition is type of:', typeof(condition));
-print('change condition');
+// print(("This is our initial condition:", condition));
+// print('condition is type of:', typeof(condition));
 
-// sees if condition is met to export or not to export ImageCollection
+// checks if condition is met to export or not to export ImageCollection
 var exportChoice = ee.Algorithms.If({
       condition: condition, 
       trueCase: exportBatchImages(answer),       // do something
